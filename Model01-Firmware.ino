@@ -16,6 +16,8 @@
 // The Kaleidoscope core
 #include "Kaleidoscope.h"
 
+#include <Kaleidoscope-Focus.h>
+
 // Support for keys that move the mouse
 #include "Kaleidoscope-MouseKeys.h"
 
@@ -188,6 +190,7 @@ KALEIDOSCOPE_INIT_PLUGINS(
   Macros,
   OneShot,
   MouseKeys,
+  Focus,
   HostPowerManagement
 );
 
@@ -225,7 +228,7 @@ KEYMAPS(
    ___,                    ___, Key_Keypad4, Key_Keypad5,   Key_Keypad6,        Key_KeypadAdd,      ___,
                            ___, Key_Keypad1, Key_Keypad2,   Key_Keypad3,        Key_Equals,         ___,
    ___,                    ___, Key_Keypad0, Key_KeypadDot, Key_KeypadMultiply, Key_KeypadDivide, Key_Enter,
-   ___, ___, ___, ___,
+   ___, ___, ___, Key_Keypad0,
    ___),
 
   [FUNCTION] =  KEYMAP_STACKED
@@ -252,6 +255,7 @@ KEYMAPS(
  * Kaleidoscope and any plugins.
  */
 void setup() {
+  Serial.begin(9600);
   // Refer to  https://github.com/keyboardio/Kaleidoscope-Hardware-Model01/blob/f469015346535cb864a340bf8eb317d268943248/src/Kaleidoscope-Hardware-Model01.h#L267-L279
   // r0c0, r0c1, r0c2, r0c3, r0c4, r0c5, r0c6,                \
   //  r1c0, r1c1, r1c2, r1c3, r1c4, r1c5, r1c6,            \
@@ -267,23 +271,32 @@ void setup() {
   //  r3c8,  r2c8,  r1c8, r0c8,                                \
   //  r3c9, ...)
   QUKEYS(
-         kaleidoscope::Qukey(0, 2, 6, Key_LeftShift), // ESC
-         kaleidoscope::Qukey(0, 2, 9, Key_RightShift), // Butterfly
 
-         kaleidoscope::Qukey(0, 1, 6, M(MACRO_HYPER)), // TAB
-         kaleidoscope::Qukey(0, 1, 9, M(MACRO_HYPER)), // ENTER
-         kaleidoscope::Qukey(0, 1, 7, Key_LeftShift),
+         kaleidoscope::Qukey(0, 1, 6, M(MACRO_HYPER)), // (TAB)
+         kaleidoscope::Qukey(0, 1, 9, M(MACRO_HYPER)), // (ENTER)
+
+         kaleidoscope::Qukey(0, 2, 6, Key_LeftAlt), // (ESC)
+         kaleidoscope::Qukey(0, 2, 9, Key_RightAlt), // (Butterfly)
+
+         // Left thumb
+         kaleidoscope::Qukey(0, 1, 7, Key_LeftShift), // (Backspace)
+         kaleidoscope::Qukey(0, 2, 7, Key_LeftGui), // (CMD)
+         kaleidoscope::Qukey(0, 3, 7, Key_LeftControl), // (SHIFT)
+
+         // Right thumb
          kaleidoscope::Qukey(0, 1, 8, Key_RightShift),
-         kaleidoscope::Qukey(0, 2, 7, Key_LeftGui),
-         kaleidoscope::Qukey(0, 2, 8, Key_RightGui),
-         kaleidoscope::Qukey(0, 3, 7, Key_LeftControl),
-         kaleidoscope::Qukey(0, 3, 8, Key_RightControl)
+         kaleidoscope::Qukey(0, 2, 8, Key_RightGui), // (ALT)
+         kaleidoscope::Qukey(0, 3, 8, Key_RightControl), // (SHIFT)
          )
   Qukeys.setTimeout(150);
   Qukeys.setReleaseDelay(5);
 
   // First, call Kaleidoscope's internal setup function
   Kaleidoscope.setup();
+
+  Focus.addHook(FOCUS_HOOK_HELP);
+  Focus.addHook(FOCUS_HOOK_LEDCONTROL);
+  Focus.addHook(FOCUS_HOOK_VERSION);
 
   // While we hope to improve this in the future, the NumPad plugin
   // needs to be explicitly told which keymap layer is your numpad layer
