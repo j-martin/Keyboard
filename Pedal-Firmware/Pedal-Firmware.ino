@@ -8,8 +8,8 @@ struct Button {
 };
 
 Button buttons[3] = {{2, false, {KEY_LEFT_CTRL, KEY_LEFT_GUI, KEY_LEFT_ALT}},
-                     {3, false, {KEY_LEFT_SHIFT}},
-                     {4, false, {KEY_LEFT_CTRL}}};
+                     {3, false, {KEY_LEFT_CTRL}},
+                     {4, false, {KEY_LEFT_SHIFT}}};
 
 void setup() {
   for (Button &button : buttons) {
